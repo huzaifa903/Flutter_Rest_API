@@ -1,7 +1,9 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_rest_api_tutorial/model/userModel.dart';
+import 'package:flutter_rest_api_tutorial/model/postModel.dart';
+import 'package:flutter_rest_api_tutorial/screens/exampleThree.dart';
+import 'package:flutter_rest_api_tutorial/screens/exampleTwo.dart';
 import 'package:http/http.dart' as http;
 
 void main() {
@@ -16,7 +18,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return const MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: MyHomePage(),
+      home: ExampleThree(),
     );
   }
 }
@@ -29,17 +31,17 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  List userData = [];
-  Future getData() async {
+  Future<List<PostModel>> getData() async {
+    // List<PostModel> postList = [];
     final response =
-        await http.get(Uri.parse("https://jsonplaceholder.typicode.com/posts"));
-    var data = jsonDecode(response.body.toString());
+        await http.get(Uri.parse('https://jsonplaceholder.typicode.com/posts'));
+
+    List jsonResponse = jsonDecode(response.body);
 
     if (response.statusCode == 200) {
-      userData = data;
-      return userData;
+      return jsonResponse.map((job) => PostModel.fromJson(job)).toList();
     } else {
-      throw Exception("No data");
+      return jsonResponse[0];
     }
   }
 
@@ -49,21 +51,41 @@ class _MyHomePageState extends State<MyHomePage> {
         appBar: AppBar(
           title: const Text("Api"),
         ),
-        body: FutureBuilder<dynamic>(
-          future: getData(),
-          builder: (context, snapshot) {
-            if (snapshot.hasData) {
-              Text("Loading");
-            } else {
-              return ListView.builder(
-                itemCount: userData.length,
-                itemBuilder: (context, index) {
-                  return Text(userData[index]);
+        body: Column(
+          children: [
+            Expanded(
+              child: FutureBuilder<List<PostModel>>(
+                future: getData(),
+                builder: (context, snapshot) {
+                  if (snapshot.hasData) {
+                    return ListView.builder(
+                      itemCount: snapshot.data!.length,
+                      itemBuilder: (context, i) {
+                        return Card(
+                          child: Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  "Title: ${snapshot.data![i].title}",
+                                  style: const TextStyle(
+                                      fontWeight: FontWeight.bold),
+                                ),
+                                Text(snapshot.data![i].body.toString()),
+                              ],
+                            ),
+                          ),
+                        );
+                      },
+                    );
+                  } else {
+                    return Text("Loading");
+                  }
                 },
-              );
-            }
-            return Text("data");
-          },
+              ),
+            )
+          ],
         ));
   }
 }

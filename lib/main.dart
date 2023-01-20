@@ -2,8 +2,11 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_rest_api_tutorial/model/postModel.dart';
+import 'package:flutter_rest_api_tutorial/screens/exampleFour.dart';
 import 'package:flutter_rest_api_tutorial/screens/exampleThree.dart';
 import 'package:flutter_rest_api_tutorial/screens/exampleTwo.dart';
+import 'package:flutter_rest_api_tutorial/screens/signUp.dart';
+import 'package:flutter_rest_api_tutorial/screens/uploadImage.dart';
 import 'package:http/http.dart' as http;
 
 void main() {
@@ -18,7 +21,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return const MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: ExampleThree(),
+      home: UploadImageScreen(),
     );
   }
 }
